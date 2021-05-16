@@ -3,6 +3,11 @@ const express = require('express')
 const app = express()
 const port = 3000
 
+app.use((req, res, next) => {
+  console.log('[Logs] Time:', Date.now(), ' | ', req.method, 'from', req.originalUrl)
+  next()
+})
+
 app.get('/', (req, res) => {
   res.send('列出全部 Todo')
 })
