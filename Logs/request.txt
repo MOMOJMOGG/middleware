@@ -2,3 +2,16 @@
 [Logs] 2021-05-17 10:38:08 | GET from /post 200
 [Logs] 2021-05-17 10:38:12 | GET from /new 200
 [Logs] 2021-05-17 10:38:19 | GET from /6388 200
+[Logs] 2021-05-17 11:17:43 | GET from /6388 200
+[Logs] 2021-05-17 11:18:27 | GET from /6388 200[Logs] Request Start: 2021-05-17 11:51:22 | GET from / | status: 200
+[Logs] Request End: 2021-05-17 11:51:22 | GET from / | status: 304
+[Logs] Request: 2021-05-17 11:51:22 | GET from / | status: 304 | total time: 3.957 ms
+[Logs] Request Start: 2021-05-17 11:51:26 | GET from /new | status: 200
+[Logs] Request End: 2021-05-17 11:51:26 | GET from /new | status: 304
+[Logs] Request: 2021-05-17 11:51:26 | GET from /new | status: 304 | total time: 3.391 ms
+[Logs] Request Start: 2021-05-17 11:51:29 | GET from /post | status: 200
+[Logs] Request End: 2021-05-17 11:51:29 | GET from /post | status: 304
+[Logs] Request: 2021-05-17 11:51:29 | GET from /post | status: 304 | total time: 2.646 ms
+[Logs] Request Start: 2021-05-17 11:51:37 | GET from /369 | status: 200
+[Logs] Request End: 2021-05-17 11:51:37 | GET from /369 | status: 200
+[Logs] Request: 2021-05-17 11:51:37 | GET from /369 | status: 200 | total time: 6.485 ms
