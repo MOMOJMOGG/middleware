@@ -22,9 +22,23 @@ let startLogger = (req, res, next) => {
   const status = res.statusCode
   // set res locals varialble
   res.locals.startTime = start
+  res.locals.method = method
+  res.locals.url = url
+  res.locals.status = status
+  res.locals.startDate = date
 
   const log = `${chalk.redBright("[Logs]")} Request Start: ${chalk.blue(date)} | ${method} from ${url} | status: ${chalk.green(status)}`
   console.log(log)
+
+  next()
+}
+
+let writeStartLogger = (req, res, next) => {
+  const date = res.locals.startDate
+  const method = res.locals.method
+  const url = res.locals.url
+  const status = res.locals.status
+
   const logContent = `[Logs] Request Start: ${date} | ${method} from ${url} | status: ${status}`
   fs.appendFile("./Logs/request.txt", logContent + "\n", err => {
     if (err) console.log(err)
@@ -33,23 +47,40 @@ let startLogger = (req, res, next) => {
   next()
 }
 
-let endLogger = (req, res) => {
+let endLogger = (req, res, next) => {
   let date = new Date()
   date = moment(date).format('YYYY-MM-DD hh:mm:ss')
   const durationInMilliseconds = getActualRequestDurationInMilliseconds(res.locals.startTime).toLocaleString()
-  const method = req.method
-  const url = req.url
+  const method = res.locals.method
+  const url = res.locals.url
   const status = res.statusCode
+  res.locals.status = status
+  res.locals.endDate = date
+  res.locals.totalTime = durationInMilliseconds
 
   let log = `${chalk.redBright("[Logs]")} Request End: ${chalk.blue(date)} | ${method} from ${url} | status: ${chalk.green(status)}`
   console.log(log)
+
+
+  log = `${chalk.redBright("[Logs]")} Request: ${chalk.blue(date)} | ${method} from ${url} | status: ${chalk.green(status)} | total time: ${chalk.red(durationInMilliseconds)} ms`
+  console.log(log)
+
+
+  next()
+}
+
+let writeEndLogger = (req, res) => {
+  const date = res.locals.endDate
+  const method = res.locals.method
+  const url = res.locals.url
+  const status = res.locals.status
+  const durationInMilliseconds = res.locals.totalTime
+
   let logContent = `[Logs] Request End: ${date} | ${method} from ${url} | status: ${status}`
   fs.appendFile("./Logs/request.txt", logContent + "\n", err => {
     if (err) console.log(err)
   })
 
-  log = `${chalk.redBright("[Logs]")} Request: ${chalk.blue(date)} | ${method} from ${url} | status: ${chalk.green(status)} | total time: ${chalk.red(durationInMilliseconds)} ms`
-  console.log(log)
   logContent = `[Logs] Request: ${date} | ${method} from ${url} | status: ${status} | total time: ${durationInMilliseconds} ms`
   fs.appendFile("./Logs/request.txt", logContent + "\n", err => {
     if (err) console.log(err)
@@ -57,6 +88,7 @@ let endLogger = (req, res) => {
 }
 
 app.use(startLogger)
+app.use(writeStartLogger)
 
 app.get('/', (req, res, next) => {
   res.send('列出全部 Todo')
@@ -66,7 +98,7 @@ app.get('/', (req, res, next) => {
 app.get('/new', (req, res, next) => {
   res.send('新增 Todo 頁面')
   next()
-}, endLogger) // 只有 /new 會出現 => Error [ERR_HTTP_HEADERS_SENT]: Cannot set headers after they are sent to the client，因此middleware設定與其他不一樣
+}, endLogger, writeEndLogger) // 只有 /new 會出現 => Error [ERR_HTTP_HEADERS_SENT]: Cannot set headers after they are sent to the client，因此middleware設定與其他不一樣
 
 app.get('/:id', (req, res, next) => {
   res.send('顯示一筆 Todo')
@@ -79,6 +111,7 @@ app.post('/', (req, res, next) => {
 })
 
 app.use(endLogger)
+app.use(writeEndLogger)
 
 app.listen(port, () => {
   console.log(`App running on port ${port}`)
